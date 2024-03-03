@@ -11,18 +11,18 @@ namespace Stajproje.Controllers
     public class PersonelController : ControllerBase
     {
 
-        private static readonly string[] Adlar = new[]
+        private static readonly string[] Firstnames = new[]
         {
             "Eren","Emirhan","Ahmet","Ayşe","Adnan","Yağmur","Elasu","Efe","Mükayil","İpek"
         };
 
 
-        private static readonly string[] Soyadlar = new[]
+        private static readonly string[] Lastnames = new[]
         {
             "Yanar","Bektaş","Kaya","Demir","Yılmaz","İlban","Çiftçi","Hocaoğlu","Uran","Sel"
         };
 
-        private static readonly string[] Usernameler = new[]
+        private static readonly string[] Usernames = new[]
         {
             "erenyanar","emranbektas","sadsaasddfa","fıjanjfıjdıfds","fojndafdd","a","b","c","d","f"
         };
@@ -46,9 +46,10 @@ namespace Stajproje.Controllers
         return Enumerable.Range(1, count).Select(index => new Personel
         {
             PersonelId = Random.Shared.Next(0, 100),
-            Adi = Adlar[Random.Shared.Next(Adlar.Length)],
-            Soyadi = Soyadlar[Random.Shared.Next(Soyadlar.Length)],
-            Username = Usernameler[Random.Shared.Next(Usernameler.Length)]
+            Firstname = Firstnames[Random.Shared.Next(Firstnames.Length)],
+            Lastname = Lastnames[Random.Shared.Next(Lastnames.Length)],
+            Username = Usernames[Random.Shared.Next(Usernames.Length)]
+
         })
         .ToArray();
             
