@@ -35,27 +35,51 @@ namespace Stajproje.Controllers
         }
 
 
-         [HttpGet("Getpersonel", Name = "Getpersonel")]
-    public IEnumerable<Personel> Get([FromQuery] int count)
-    {
-        if (count <= 0)
+        [HttpGet("Getpersonel", Name = "Getpersonel")]
+        public IEnumerable<Personel> Get([FromQuery] int count)
         {
-            return Enumerable.Empty<Personel>();
+            if (count <= 0)
+            {
+                return Enumerable.Empty<Personel>();
+            }
+
+            return Enumerable.Range(1, count).Select(index => new Personel
+            {
+                PersonelId = Random.Shared.Next(0, 100),
+                Firstname = Firstnames[Random.Shared.Next(Firstnames.Length)],
+                Lastname = Lastnames[Random.Shared.Next(Lastnames.Length)],
+                Username = Usernames[Random.Shared.Next(Usernames.Length)]
+
+            })
+            .ToArray();
+
         }
 
-        return Enumerable.Range(1, count).Select(index => new Personel
+        [HttpPost("Getpersonel", Name = "Getpersonel")]
+        public IEnumerable<Personel> Post([FromBody] PostRequestModel req)
         {
-            PersonelId = Random.Shared.Next(0, 100),
-            Firstname = Firstnames[Random.Shared.Next(Firstnames.Length)],
-            Lastname = Lastnames[Random.Shared.Next(Lastnames.Length)],
-            Username = Usernames[Random.Shared.Next(Usernames.Length)]
+            if (req.Count <= 0)
+            {
+                return Enumerable.Empty<Personel>();
+            }
 
-        })
-        .ToArray();
-            
+            return Enumerable.Range(1, req.Count).Select(index => new Personel
+            {
+                PersonelId = Random.Shared.Next(0, 100),
+                Firstname = Firstnames[Random.Shared.Next(Firstnames.Length)],
+                Lastname = Lastnames[Random.Shared.Next(Lastnames.Length)],
+                Username = Usernames[Random.Shared.Next(Usernames.Length)]
+
+            })
+            .ToArray();
+
         }
 
 
 
     }
+
+
 }
+
+
