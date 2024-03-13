@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Microsoft.VisualBasic;
 using System;
 using System.Collections.Generic;
 
@@ -86,7 +87,7 @@ namespace Stajproje.Controllers
         }
 
         [HttpPost("GetPersonelByNumber")]
-        public IActionResult GetPersonelByNumber([FromBody] GetPersonelByNumberRequestModel req )
+        public IActionResult GetPersonelByNumber([FromBody] GetPersonelByNumberRequestModel req)
         {
             try
             {
@@ -110,7 +111,7 @@ namespace Stajproje.Controllers
                 }
                 else
                 {
-                    return BadRequest(new { IsSuccess=false, Message = "Geçersiz sayı formatı." });
+                    return BadRequest(new { IsSuccess = false, Message = "Geçersiz sayı formatı." });
                 }
             }
             catch (Exception ex)
@@ -119,14 +120,21 @@ namespace Stajproje.Controllers
             }
         }
 
-        [HttpPost]
+        [HttpPost("AddPersonel")]
         public async Task<ActionResult<Personel>> Post([FromBody] AddPersonelRequestModel person)
         {
+
+            var usernameExists = await _dbContext.Personels.AnyAsync(x => x.Username == person.Username);
+
             if (person == null)
             {
                 return BadRequest("Personel object is null.");
             }
-            Personel personel=new Personel();
+            else if (usernameExists)
+            {
+                return BadRequest("Bu username kullanılıyor!");
+            }
+            Personel personel = new Personel();
             personel.Firstname = person.Firstname;
             personel.Lastname = person.Lastname;
             personel.Username = person.Username;
@@ -139,11 +147,37 @@ namespace Stajproje.Controllers
             {
                 IsSuccess = true,
                 Message = $"Eklenen Personel: {personel.Firstname} {personel.Lastname}",
-                Personel =personel
+                Personel = personel
             };
 
             return Ok(response);
         }
+
+        [HttpPut("UpdatePersonel")]
+        public async Task<IActionResult> UpdatePersonel([FromBody] UpdatePersonelRequestModel person)
+        {
+            var selectedPersonel = await _dbContext.Personels.FirstOrDefaultAsync(p => p.PersonelId == person.PersonelId);
+
+            if (selectedPersonel == null)
+            {
+                return BadRequest("PersonelId bulunamadı");
+            }
+            var usernameExists = await _dbContext.Personels.FirstOrDefaultAsync(x => x.Username == person.Username);
+            if (usernameExists != null && usernameExists.PersonelId != person.PersonelId) 
+            {
+                return BadRequest("Username daha önce kullanılmış");
+            }
+            selectedPersonel.Username = String.IsNullOrEmpty(person.Username) ? selectedPersonel.Username : person.Username;
+            selectedPersonel.Firstname = String.IsNullOrEmpty(person.Firstname) ? selectedPersonel.Firstname : person.Firstname;
+            selectedPersonel.Lastname = String.IsNullOrEmpty(person.Lastname) ?  selectedPersonel.Lastname : person.Lastname;
+            await _dbContext.SaveChangesAsync();
+            return Ok(selectedPersonel);
+            
+        }
+        
+        
+
+       
 
     }
 }
