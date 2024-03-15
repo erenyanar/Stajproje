@@ -174,10 +174,22 @@ namespace Stajproje.Controllers
             return Ok(selectedPersonel);
             
         }
-        
-        
+        [HttpDelete("DeletePersonel")]
+        public async Task<IActionResult> DeletePersonel([FromBody] DeletePersonelRequestModel person)
+        {
+            var selectedPersonel = await _dbContext.Personels.FirstOrDefaultAsync(p => p.PersonelId == person.PersonelId);
+            if (selectedPersonel == null)
+            {
+                return BadRequest("PersonelId bulunamadı");
+            }
+            _dbContext.Personels.Remove(selectedPersonel);
+            await _dbContext.SaveChangesAsync();
+            return Ok("Personel silindi");
 
-       
+        }
+
+
+
 
     }
 }

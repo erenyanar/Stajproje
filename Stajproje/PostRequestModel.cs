@@ -30,4 +30,11 @@
         public string Username { get; set; }
         public int PersonelId { get; set; }
     }
+
+    public class DeletePersonelRequestModel
+    {
+        
+        public int PersonelId { get; set;}
+
+    }
 }
